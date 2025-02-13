@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bazarum</title>
+
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s, color 0.3s;
+      }
+      .navbar {
+        width: 70%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      .menu-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .menu-button {
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .app-icon img {
+        height: 40px;
+      }
+      .search-bar {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+      }
+
+      .search-bar input {
+        width: 60%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .icon-group {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .theme-toggle,
+      .profile-icon {
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .slider-container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: auto;
+        overflow: hidden;
+      }
+
+      .slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+      }
+
+      .slide {
+        position: relative;
+        width: 100vw;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem;
+      }
+
+      .slide img {
+        width: 50%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .slide-content {
+        width: 60%;
+        text-align: left;
+      }
+
+      .slide-content h3 {
+        font-size: 16px;
+        opacity: 0.7;
+      }
+
+      .slide-content h1 {
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .slide-content button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: white;
+        color: black;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+      }
+
+      .slide-content button:hover {
+        background-color: #ffcc00;
+      }
+
+      .prev,
+      .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.122);
+        color: black;
+        font-size: 24px;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .prev {
+        left: 10px;
+      }
+      .next {
+        right: 10px;
+      }
+
+      .prev:hover,
+      .next:hover {
+        background-color: white;
+      }
+
+      .dots {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .dot {
+        height: 10px;
+        width: 10px;
+        margin: 5px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .dot.active,
+      .dot:hover {
+        background-color: white;
+      }
+
+      .dark-theme {
+        background: #222;
+        color: #fff;
+      }
+
+      .dark-theme .slide-content h3,
+      .dark-theme .slide-content h1 {
+        color: white;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        text-align: center;
+        padding-bottom: 10px;
+        transition: background 0.3s;
+      }
+
+      .card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .card p {
+        font-weight: bold;
+        margin: 10px 0;
+        font-size: 16px;
+        transition: color 0.3s;
+        color: #000;
+      }
+      
+      footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #666;
+      background: #f8f8f8;
+    }
+
+    footer p {
+      margin: 10px 0;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .links {
+      max-width: 800px;
+      margin: auto;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #888;
+    }
+
+    .links a {
+      color: #888;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+    @media (max-width: 600px) {
+      footer {
+        font-size: 12px;
+        padding: 10px;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="menu-container">
+        <div class="app-icon">
+          <img id="logo" src="images/logo.png" alt="App Logo" />
+        </div>
+        <div class="menu-button" onclick="toggleMenu()">Bazarum</div>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search..." />
+      </div>
+      <div class="icon-group">
+        <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+        <img
+          id="perfil"
+          src="images/avatar.png"
+          alt="Perfil"
+          style="width: 50px; height: 50px; border-radius: 50%"
+          href="login.php"
+        />
+      </div>
+    </nav>
+
+    <div class="slider-container">
+      <div class="slider">
+        <div class="slide">
+          <div class="slide-content">
+            <h3>Luz de trabajo, LED, blanco</h3>
+            <h1>
+              Estilos Accesorios y<br />
+              Nueva Lámpara de Mesa
+            </h1>
+            <button>Comprar ahora</button>
+          </div>
+          <img src="images/banner.png" alt="Lámparas modernas" />
+        </div>
+        <div class="slide">
+          <div class="slide-content">
+            <h3>Diseño Elegante</h3>
+            <h1>
+              Moderno y<br />
+              estilo futurista
+            </h1>
+            <button>Comprar ahora</button>
+          </div>
+          <img src="images/banner2.webp" alt="Decoración de hogar" />
+        </div>
+        <div class="slide">
+          <div class="slide-content">
+            <h3>Lamparas LED Inovativa</h3>
+            <h1>
+              Ilumina tu<br />
+              espacio de vida
+            </h1>
+            <button>Comprar ahora</button>
+          </div>
+          <img src="images/banner3.webp" alt="Lámparas LED" />
+        </div>
+      </div>
+
+      <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+      <button class="next" onclick="moveSlide(1)">&#10095;</button>
+
+      <div class="dots">
+        <span class="dot active" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <div class="card">
+        <img src="images/producto1.png" alt="Lámpara LED Moderna" />
+        <p>Lámpara LED Moderna</p>
+        <p>$3,500</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto2.webp" alt="Pendante Novedoso" />
+        <p>Pendante Novedoso</p>
+        <p>$1,000</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto3.webp" alt="Tenis De Trail Running Nike" />
+        <p>Tenis De Trail Running Nike </p>
+        <p>$1,700</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto4.webp" alt="Reloj Elegante" />
+        <p>Reloj Elegante</p>
+        <p>$4,299</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto5.webp" alt="Samsung Galaxy S25 Ultra" />
+        <p>Samsung Galaxy S25 Ultra</p>
+        <p>$31,159</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto6.webp" alt="Tenis Running Nike" />
+        <p>Tenis Running Nike</p>
+        <p>$1,009</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto7.webp" alt="Collar Dije Corazón" />
+        <p>Collar Dije Corazón</p>
+        <p>$599</p>
+      </div>
+
+      <div class="card">
+        <img src="images/producto8.webp" alt="Iphone 16" />
+        <p>Iphone 16</p>
+        <p>$28,999</p>
+      </div>
+    </div>
+
+    <footer>
+        <p>Productos más buscados</p>
+        <div class="links">
+          <a href="#">Aire Acondicionado</a> - 
+          <a href="#">Airpods</a> - 
+          <a href="#">Apple Watch</a> - 
+          <a href="#">Bicicleta</a> - 
+          <a href="#">Cámaras de Seguridad</a> - 
+          <a href="#">Celular Samsung</a> - 
+          <a href="#">Computadora</a> - 
+          <a href="#">Escritorio</a> - 
+        </div>
+        <p>📞 800-800-8000</p>
+        <p>📩 Contáctanos</p>
+        <p>&copy; 2025 Bazarum</p>
+        <p>🚀 Desarrollada por Los MCR</p>
+      </footer>
+
+    <script>
+      document.addEventListener("click", function (event) {
+        const menu = document.getElementById("menu");
+        const menuButton = document.querySelector(".menu-button");
+        if (
+          !menu.contains(event.target) &&
+          !menuButton.contains(event.target)
+        ) {
+          menu.classList.remove("open");
+        }
+      });
+
+      function toggleTheme() {
+        const body = document.body;
+        const logo = document.getElementById("logo");
+        body.classList.toggle("dark-theme");
+
+        if (body.classList.contains("dark-theme")) {
+          logo.src = "images/logo-darkmode.png";
+        } else {
+          logo.src = "images/logo.png";
+        }
+      }
+
+      let slideIndex = 0;
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot");
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.style.display = i === index ? "flex" : "none";
+        });
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle("active", i === index);
+        });
+
+        slideIndex = index;
+      }
+
+      function moveSlide(n) {
+        slideIndex = (slideIndex + n + slides.length) % slides.length;
+        showSlide(slideIndex);
+      }
+
+      function currentSlide(n) {
+        showSlide(n - 1);
+      }
+
+      showSlide(slideIndex);
+      setInterval(() => moveSlide(1), 10000);
+    </script>
+  </body>
+</html>
