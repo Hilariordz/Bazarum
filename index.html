@@ -189,7 +189,6 @@
   background-color: white;
 }
 
-/* Media Queries for responsiveness */
 @media (max-width: 1200px) {
   .navbar {
     width: 90%;
@@ -552,12 +551,10 @@ footer p {
       const perfil = document.getElementById('perfil');
   const menu = document.getElementById('menu');
 
-  // Muestra u oculta el menú desplegable
   perfil.addEventListener('click', () => {
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   });
 
-  // Cierra el menú si se hace clic fuera de él
   document.addEventListener('click', (event) => {
     if (!perfil.contains(event.target) && !menu.contains(event.target)) {
       menu.style.display = 'none';
