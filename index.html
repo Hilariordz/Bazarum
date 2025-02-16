@@ -156,11 +156,11 @@
 }
 
 .prev {
-  left: 10px;
+  left: -10px;
 }
 
 .next {
-  right: 10px;
+  right: -10px;
 }
 
 .prev:hover,
@@ -272,11 +272,58 @@
   color: #fff;
 }
 
+.dark-theme .slide-content button {
+  background-color: #333; 
+  color: #ddd; 
+  border: 1px solid #444; 
+}
+
+.dark-theme .slide-content button:hover {
+  background-color: #555; 
+  color: #fff; 
+}
+      
 .dark-theme .slide-content h3,
 .dark-theme .slide-content h1 {
   color: white;
 }
 
+  .dark-theme .card {
+  background: #333; 
+  color: #fff; 
+  box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1); 
+}
+
+.dark-theme .card p {
+  color: #f0f0f0; 
+}
+
+.dark-theme .card:hover {
+  background-color: #444; 
+}
+
+.dark-theme .card:hover p {
+  color: black;
+}
+
+.dark-theme footer {
+  background-color: #333;
+  color: #ddd;
+}
+
+.dark-theme footer a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+.dark-theme footer a:hover {
+  color: #fff;
+}
+
+.dark-theme footer p {
+  color: #ddd;
+}
+      
 .gallery {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -292,7 +339,13 @@
   overflow: hidden;
   text-align: center;
   padding-bottom: 10px;
-  transition: background 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+  background-color: #f0f8ff;
 }
 
 .card img {
