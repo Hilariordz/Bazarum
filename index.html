@@ -6,7 +6,7 @@
     <title>Bazarum</title>
 
     <style>
-   body {
+  body {
   font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
@@ -550,6 +550,113 @@ footer p {
       </footer>
 
     <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const searchBar = document.querySelector(".search-bar");
+  const searchInput = searchBar.querySelector("input");
+  const productCards = document.querySelectorAll(".gallery .card");
+  const searchResults = document.createElement("ul");
+  searchResults.classList.add("search-results");
+  searchBar.appendChild(searchResults);
+  searchBar.style.position = "relative";
+
+  searchInput.addEventListener("input", function () {
+    const searchText = searchInput.value.toLowerCase().trim();
+    searchResults.innerHTML = "";
+    
+    if (searchText === "") {
+      searchResults.style.display = "none";
+      return;
+    }
+    
+    let resultsFound = false;
+    
+    productCards.forEach((card) => {
+      const productNameElement = card.querySelector("p:first-of-type");
+      const productImage = card.querySelector("img");
+      if (!productNameElement || !productImage) return;
+      
+      const productName = productNameElement.textContent.toLowerCase();
+      if (productName.includes(searchText)) {
+        resultsFound = true;
+        const listItem = document.createElement("li");
+        listItem.classList.add("search-item");
+        
+        const img = document.createElement("img");
+        img.src = productImage.src;
+        img.alt = productNameElement.textContent;
+        img.classList.add("search-img");
+        
+        const text = document.createElement("span");
+        text.textContent = productNameElement.textContent;
+        
+        listItem.appendChild(img);
+        listItem.appendChild(text);
+        
+        listItem.addEventListener("click", function () {
+          searchInput.value = productNameElement.textContent;
+          searchResults.style.display = "none";
+        });
+        
+        searchResults.appendChild(listItem);
+      }
+    });
+    
+    searchResults.style.display = resultsFound ? "block" : "none";
+  });
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .search-bar {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      width: calc(100% - 20px);
+      max-height: 250px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      list-style: none;
+      padding: 0;
+      margin-top: 5px;
+      border-radius: 5px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .search-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #ddd;
+      background: white;
+    }
+    .search-item:last-child {
+      border-bottom: none;
+    }
+    .search-item:hover {
+      background: #f0f0f0;
+    }
+    .search-img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 5px;
+    }
+  `;
+  document.head.appendChild(style);
+});
+
+
+
       document.addEventListener("click", function (event) {
         const menu = document.getElementById("menu");
         const menuButton = document.querySelector(".menu-button");
