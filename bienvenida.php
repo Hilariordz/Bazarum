@@ -81,8 +81,104 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Productos</title>
     <link rel="stylesheet" href="stylebienvenida.css">
+       <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>55
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <style>
-
+    .product-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    .card {
+        background: #1e1e1e;
+        border: 2px solid #00bfff;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        position: relative;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        cursor: pointer;
+    }
+    .card:hover {
+        transform: scale(1.1);
+        box-shadow: 0px 4px 10px rgba(0, 191, 255, 0.5);
+    }
+    .edit-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        background: #333;
+        border-radius: 5px;
+        padding: 5px;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .dropdown-menu.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .dropdown-menu button {
+        display: block;
+        background: none;
+        border: none;
+        color: white;
+        padding: 5px;
+        cursor: pointer;
+    }
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        animation: fadeIn 0.3s ease;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        color: white;
+        width: 300px;
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+    }
+    .popup.show {
+        display: block;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    .popup img {
+        width: 100%;
+        border-radius: 5px;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
     </style>
 </head>
 <body>
@@ -96,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="suggestions" id="suggestions"></div>
         </div>
         <a href="#" onclick="openAddPopup()">Agregar Producto</a>
-        <button class="icon-button" onclick="toggleDarkMode()">🌙</button>
+        <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
         <button class="icon-button"><i class="fas fa-shopping-cart"></i></button>
     </div>
     <div id="sidemenu" class="sidemenu">
@@ -314,6 +410,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }, 8000);
             }
         }
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function openAddPopup() {
+            document.getElementById('add-popup').classList.remove('hidden');
+        }
+
+        function closeAddPopup() {
+            document.getElementById('add-popup').classList.add('hidden');
+        }
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: "¿Eliminar?",
+                text: "No podrás recuperar este producto",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                confirmButtonText: "Sí, eliminar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = "delete.php?id=" + id;
+                }
+            });
+        }
+
+        AOS.init();
+        function toggleDropdown(event, id) {
+        event.stopPropagation();
+        document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
+        document.getElementById('dropdown-' + id).style.display = 'block';
+    }
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
+    });
+    function openPopup(id) {
+        document.getElementById('overlay-' + id).style.display = 'block';
+        document.getElementById('popup-' + id).style.display = 'block';
+    }
+    function closePopup(id) {
+        document.getElementById('overlay-' + id).style.display = 'none';
+        document.getElementById('popup-' + id).style.display = 'none';
+    }
     </script>
 </body>
 </html>
