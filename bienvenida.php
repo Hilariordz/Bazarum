@@ -5,29 +5,46 @@ $message = '';
 $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['delete'])) {
-        $id = $_POST['id'];
-        $query = "DELETE FROM productos WHERE id=:id";
-        $stmt = $cnnPDO->prepare($query);
-        $stmt->bindParam(':id', $id);
-        if ($stmt->execute()) {
-            $message = "Producto eliminado exitosamente.";
-            $messageType = 'success';
-        } else {
-            $message = "Error al eliminar el producto.";
-            $messageType = 'error';
-        }
-    } else if (isset($_POST['add'])) {
-        $name = $_POST['name'];
-        $price = $_POST['price'];
-        $category = $_POST['category'];
-        $description = $_POST['description'];
-        $created_by = 1; 
+    try {
+        if (isset($_POST['delete'])) {
+            $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
+            if ($id === false) {
+                throw new Exception("ID no válido.");
+            }
 
-        $image = $_FILES['image']['name'];
-        $target = "uploads/" . basename($image);
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-            $query = "INSERT INTO productos (name, price, category, description, image, created_by) VALUES (:name, :price, :category, :description, :image, :created_by)";
+            $query = "DELETE FROM productos WHERE id=:id";
+            $stmt = $cnnPDO->prepare($query);
+            $stmt->bindParam(':id', $id);
+            if ($stmt->execute()) {
+                $message = "Producto eliminado exitosamente.";
+                $messageType = 'success';
+            } else {
+                throw new Exception("Error al eliminar el producto.");
+            }
+        } 
+        else if (isset($_POST['add'])) {
+            $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+            $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+            $category = filter_var($_POST['category'], FILTER_SANITIZE_STRING);
+            $description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
+            $created_by = 1; 
+
+            if ($price === false) {
+                throw new Exception("Precio inválido.");
+            }
+
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                $image = $_FILES['image']['name'];
+                $target = "uploads/" . basename($image);
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+                    throw new Exception("Error al subir la imagen.");
+                }
+            } else {
+                $image = null;
+            }
+
+            $query = "INSERT INTO productos (name, price, category, description, image, created_by) 
+                      VALUES (:name, :price, :category, :description, :image, :created_by)";
             $stmt = $cnnPDO->prepare($query);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':price', $price);
@@ -40,40 +57,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message = "Producto agregado exitosamente.";
                 $messageType = 'success';
             } else {
-                $message = "Error al agregar el producto.";
-                $messageType = 'error';
+                throw new Exception("Error al agregar el producto.");
             }
-        } else {
-            $message = "Error al subir la imagen.";
-            $messageType = 'error';
-        }
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $price = $_POST['price'];
-        $category = $_POST['category'];
-        $description = $_POST['description'];
-        $created_by = $_POST['created_by'];
+        } 
+        else {
+            $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
+            $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+            $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+            $category = filter_var($_POST['category'], FILTER_SANITIZE_STRING);
+            $description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
+            $created_by = filter_var($_POST['created_by'], FILTER_VALIDATE_INT);
 
-        $query = "UPDATE productos SET name=:name, price=:price, category=:category, description=:description, created_by=:created_by WHERE id=:id";
-        $stmt = $cnnPDO->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':price', $price);
-        $stmt->bindParam(':category', $category);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':created_by', $created_by);
+            if ($id === false || $price === false || $created_by === false) {
+                throw new Exception("Datos no válidos.");
+            }
 
-        if ($stmt->execute()) {
-            $message = "Producto actualizado exitosamente.";
-            $messageType = 'success';
-        } else {
-            $message = "Error al actualizar el producto.";
-            $messageType = 'error';
+            $query = "UPDATE productos SET name=:name, price=:price, category=:category, 
+                      description=:description, created_by=:created_by WHERE id=:id";
+            $stmt = $cnnPDO->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':price', $price);
+            $stmt->bindParam(':category', $category);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':created_by', $created_by);
+
+            if ($stmt->execute()) {
+                $message = "Producto actualizado exitosamente.";
+                $messageType = 'success';
+            } else {
+                throw new Exception("Error al actualizar el producto.");
+            }
         }
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+        $messageType = 'error';
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
